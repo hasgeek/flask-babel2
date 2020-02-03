@@ -16,7 +16,7 @@ import os
 
 from babel import Locale, dates, numbers, support
 from flask import _app_ctx_stack, _request_ctx_stack, current_app, has_request_context
-from werkzeug import ImmutableDict
+from werkzeug.datastructures import ImmutableDict
 
 from flask_babel2._compat import string_types
 from flask_babel2.speaklater import LazyString
