@@ -18,8 +18,8 @@ from babel import Locale, dates, numbers, support
 from flask import _app_ctx_stack, _request_ctx_stack, current_app, has_request_context
 from werkzeug.datastructures import ImmutableDict
 
-from flask_babel2._compat import string_types
-from flask_babel2.speaklater import LazyString
+from flask_babelhg._compat import string_types
+from flask_babelhg.speaklater import LazyString
 
 try:
     from pytz.gae import pytz
@@ -35,7 +35,7 @@ _DEFAULT_LOCALE = Locale.parse('en')
 
 class Babel(object):
     """Central controller class that can be used to configure how
-    Flask-Babel2 behaves.  Each application that wants to use Flask-Babel2
+    Flask-Babelhg behaves.  Each application that wants to use Flask-Babelhg
     has to create, or run :meth:`init_app` on, an instance of this class
     after the configuration was initialized.
     """
@@ -102,7 +102,7 @@ class Babel(object):
 
         #: a mapping of Babel datetime format strings that can be modified
         #: to change the defaults.  If you invoke :func:`format_datetime`
-        #: and do not provide any format string Flask-Babel2 will do the
+        #: and do not provide any format string Flask-Babelhg will do the
         #: following things:
         #:
         #: 1.   look up ``date_formats['datetime']``.  By default ``'medium'``
@@ -193,7 +193,7 @@ class Babel(object):
 def get_locale():
     """Returns the locale that should be used for this request as
     `babel.Locale` object.  This returns `None` if used outside of
-    a request. If flask-babel2 was not attached to the Flask application,
+    a request. If flask-babelhg was not attached to the Flask application,
     will return 'en' locale.
     """
     ctx = _get_current_context()
@@ -219,7 +219,7 @@ def get_locale():
 def get_timezone():
     """Returns the timezone that should be used for this request as
     `pytz.timezone` object.  This returns `None` if used outside of
-    a request. If flask-babel2 was not attached to an application,
+    a request. If flask-babelhg was not attached to an application,
     will return UTC timezone object.
     """
     ctx = _get_current_context()

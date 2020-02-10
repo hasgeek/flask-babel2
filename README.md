@@ -1,7 +1,7 @@
-# Flask Babel2 - 0.12.3
+# Flask Babelhg - 0.12.3
 
-[![Build Status](https://travis-ci.org/hasgeek/flask-babel2.svg?branch=master)](https://travis-ci.org/hasgeek/flask-babel2)
-![license](https://img.shields.io/github/license/hasgeek/flask-babel2.svg?maxAge=2592000)
+[![Build Status](https://travis-ci.org/hasgeek/flask-babelhg.svg?branch=master)](https://travis-ci.org/hasgeek/flask-babelhg)
+![license](https://img.shields.io/github/license/hasgeek/flask-babelhg.svg?maxAge=2592000)
 
 Implements i18n and l10n support for Flask. This is based on the Python
 [babel][] module as well as [pytz][] both of which are installed automatically
@@ -14,7 +14,7 @@ This release merges additional functionality from Flask-BabelEx:
    if necessary;
 3. Does not reload localizations for each request.
 
-Flask-Babel2 is API-compatible with Flask-Babel.
+Flask-Babelhg is API-compatible with Flask-Babel.
 
 
 # Documention
@@ -23,4 +23,4 @@ The latest documentation is available [here][docs].
 
 [babel]: https://github.com/python-babel/babel
 [pytz]: https://pypi.python.org/pypi/pytz/
-[docs]: https://pythonhosted.org/Flask-Babel2/
+[docs]: https://pythonhosted.org/Flask-Babelhg/

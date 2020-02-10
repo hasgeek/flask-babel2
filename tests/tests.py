@@ -11,15 +11,15 @@ import unittest
 from babel.support import NullTranslations
 import flask
 
-from flask_babel2 import (
+from flask_babelhg import (
     get_translations,
     gettext,
     lazy_gettext,
     lazy_ngettext,
     ngettext,
 )
-from flask_babel2._compat import text_type
-import flask_babel2 as babel
+from flask_babelhg._compat import text_type
+import flask_babelhg as babel
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 

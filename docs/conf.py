@@ -100,7 +100,7 @@ html_theme = 'flask_small'
 # documentation.
 html_theme_options = {
     'index_logo': 'flask-babel.png',
-    'github_fork': 'hasgeek/flask-babel2',
+    'github_fork': 'hasgeek/flask-babelhg',
 }
 
 # Add any paths that contain custom themes here, relative to this directory.

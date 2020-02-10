@@ -1,9 +1,9 @@
-Flask-Babel2
+Flask-Babelhg
 ===========
 
-.. module:: flask_babel2
+.. module:: flask_babelhg
 
-Flask-Babel2 is an extension to `Flask`_ that adds i18n and l10n support to
+Flask-Babelhg is an extension to `Flask`_ that adds i18n and l10n support to
 any Flask application with the help of `babel`_, `pytz`_ and
 `speaklater`_.  It has builtin support for date formatting with timezone
 support as well as a very simple and friendly interface to :mod:`gettext`
@@ -14,13 +14,13 @@ Installation
 
 Install the extension with one of the following commands::
 
-    $ easy_install Flask-Babel2
+    $ easy_install Flask-Babelhg
 
 or alternatively if you have pip installed::
 
-    $ pip install Flask-Babel2
+    $ pip install Flask-Babelhg
 
-Please note that Flask-Babel2 requires Jinja 2.5.  If you are using an
+Please note that Flask-Babelhg requires Jinja 2.5.  If you are using an
 older version you will have to upgrade or disable the Jinja support
 (see configuration).
 
@@ -32,7 +32,7 @@ To get started all you need to do is to instantiate a :class:`Babel`
 object after configuring the application::
 
     from flask import Flask
-    from flask_babel2 import Babel
+    from flask_babelhg import Babel
 
     app = Flask(__name__)
     app.config.from_pyfile('mysettings.cfg')
@@ -110,7 +110,7 @@ To play with the date formatting from the console, you can use the
 
 Here some examples:
 
->>> from flask_babel2 import format_datetime
+>>> from flask_babelhg import format_datetime
 >>> from datetime import datetime
 >>> format_datetime(datetime(1987, 3, 5, 17, 12))
 u'Mar 5, 1987 5:12:00 PM'
@@ -126,7 +126,7 @@ u'05 12 1987'
 And again with a different language:
 
 >>> app.config['BABEL_DEFAULT_LOCALE'] = 'de'
->>> from flask_babel2 import refresh; refresh()
+>>> from flask_babelhg import refresh; refresh()
 >>> format_datetime(datetime(1987, 3, 5, 17, 12), 'EEEE, d. MMMM yyyy H:mm')
 u'Donnerstag, 5. M\xe4rz 1987 17:12'
 
@@ -146,30 +146,30 @@ To play with the date formatting from the console, you can use the
 
 Here are some examples:
 
->>> from flask_babel2 import format_number
+>>> from flask_babelhg import format_number
 >>> format_number(1099)
 '1,099'
 
->>> from flask_babel2 import format_decimal
+>>> from flask_babelhg import format_decimal
 >>> format_decimal(1.2346)
 u'1.235'
 
->>> from flask_babel2 import format_currency
+>>> from flask_babelhg import format_currency
 >>> format_currency(1099.98, 'USD')
 '$1,099.98'
 
->>> from flask_babel2 import format_percent
+>>> from flask_babelhg import format_percent
 >>> format_percent(0.34)
 '34%'
 
->>> from flask_babel2 import format_scientific
+>>> from flask_babelhg import format_scientific
 >>> format_scientific(10000)
 '1E4'
 
 And again with a different language:
 
 >>> app.config['BABEL_DEFAULT_LOCALE'] = 'de'
->>> from flask_babel2 import refresh; refresh()
+>>> from flask_babelhg import refresh; refresh()
 
 >>> format_number(1099)
 '1.099'
@@ -202,7 +202,7 @@ There are two functions responsible for translating: :func:`gettext` and
 :func:`ngettext`.  The first to translate singular strings and the second
 to translate strings that might become plural.  Here some examples::
 
-    from flask_babel2 import gettext, ngettext
+    from flask_babelhg import gettext, ngettext
 
     gettext(u'A simple string')
     gettext(u'Value: %(value)s', value=42)
@@ -213,12 +213,12 @@ application and define them outside of a request, you can use a lazy
 strings.  Lazy strings will not be evaluated until they are actually used.
 To use such a lazy string, use the :func:`lazy_gettext` function::
 
-    from flask_babel2 import lazy_gettext
+    from flask_babelhg import lazy_gettext
 
     class MyForm(formlibrary.FormBase):
         success_message = lazy_gettext(u'The form was successfully saved.')
 
-So how does Flask-Babel2 find the translations?  Well first you have to
+So how does Flask-Babelhg find the translations?  Well first you have to
 create some.  Here is how you do it:
 
 Translating Applications
@@ -258,7 +258,7 @@ translation.  For example to translate to German use this command::
     $ pybabel init -i messages.pot -d translations -l de
 
 ``-d translations`` tells pybabel to store the translations in this
-folder.  This is where Flask-Babel2 will look for translations.  Put it
+folder.  This is where Flask-Babelhg will look for translations.  Put it
 next to your template folder.
 
 Now edit the ``translations/de/LC_MESSAGES/messages.po`` file as needed.
@@ -278,7 +278,7 @@ out if a translation matched a changed key).  If you have fuzzy entries,
 make sure to check them by hand and remove the fuzzy flag before
 compiling.
 
-Flask-Babel2 looks for message catalogs in ``translations`` directory
+Flask-Babelhg looks for message catalogs in ``translations`` directory
 which should be located under Flask application directory. Default
 domain is "messages".
 
@@ -292,15 +292,15 @@ directory structure should look like this:
 Translation Domains
 -------------------
 
-By default, Flask-Babel2 will use "messages" domain, which will make it use translations
+By default, Flask-Babelhg will use "messages" domain, which will make it use translations
 from the ``messages.mo`` file. It is not very convenient for third-party Flask extensions,
 which might want to localize themselves without requiring user to merge their translations
 into "messages" domain.
 
-Flask-Babel2 allows extension developers to specify which translation domain to
+Flask-Babelhg allows extension developers to specify which translation domain to
 use::
 
-    from flask_babel2 import Domain
+    from flask_babelhg import Domain
 
     mydomain = Domain(domain='myext')
 
@@ -314,7 +314,7 @@ they have to be located in ``translations`` directory under users Flask applicat
 If extension is distributed with the localizations, it is possible to specify
 their location::
 
-    from flask_babel2 import Domain
+    from flask_babelhg import Domain
 
     from flask.ext.myext import translations
     mydomain = Domain(translations.__path__[0])
@@ -329,7 +329,7 @@ To set the :class:`Domain` that will be used in an app, pass it to
 :class:`Babel` on initialization::
 
     from flask import Flask
-    from flask_babel2 import Babel, Domain
+    from flask_babelhg import Babel, Domain
 
     app = Flask(__name__)
     domain = Domain(domain='myext')
@@ -341,7 +341,7 @@ To change the default domain in a request context, call the
 :meth:`~Domain.as_default` method from within the request context::
 
     from flask import Flask
-    from flask_babel2 import Babel, Domain, gettext
+    from flask_babelhg import Babel, Domain, gettext
 
     app = Flask(__name__)
     domain = Domain(domain='myext')
@@ -378,7 +378,7 @@ API
 ---
 
 This part of the documentation documents each and every public class or
-function from Flask-Babel2.
+function from Flask-Babelhg.
 
 Configuration
 `````````````
