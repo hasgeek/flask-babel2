@@ -243,6 +243,15 @@ def get_timezone():
     return tzinfo
 
 
+def ctx_has_locale():
+    """
+    Reports if Babel was used in the current context, for setting a
+    `Vary: Accept-Language` header in the response.
+    """
+    ctx = _get_current_context()
+    return hasattr(ctx, 'babel_locale')
+
+
 def refresh():
     """Refreshes the cached timezones and locale information.  This can
     be used to switch a translation between a request and if you want
