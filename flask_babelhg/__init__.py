@@ -18,13 +18,13 @@ from babel import Locale, dates, numbers, support
 from flask import _app_ctx_stack, _request_ctx_stack, current_app, has_request_context
 from werkzeug.datastructures import ImmutableDict
 
-from flask_babelhg._compat import string_types
-from flask_babelhg.speaklater import LazyString
+from ._compat import string_types
+from .speaklater import LazyString
 
 try:
     from pytz.gae import pytz
 except ImportError:
-    from pytz import timezone, UTC
+    from pytz import UTC, timezone
 else:
     timezone = pytz.timezone
     UTC = pytz.UTC
@@ -176,8 +176,7 @@ class Babel(object):
 
     @property
     def domain(self):
-        """The message domain for the translations as a string.
-        """
+        """The message domain for the translations as a string."""
         return get_domain()
 
     def load_locale(self, locale):

@@ -2,6 +2,10 @@
 from flask_babelhg._compat import text_type
 
 
+def is_lazy_string(string):
+    return isinstance(string, LazyString)
+
+
 class LazyString(object):
     def __init__(self, func, *args, **kwargs):
         self._func = func
@@ -63,9 +67,6 @@ class LazyString(object):
 
     def __ge__(self, other):
         return text_type(self) >= other
-
-    def __html__(self):
-        return text_type(self)
 
     def __hash__(self):
         return hash(text_type(self))
