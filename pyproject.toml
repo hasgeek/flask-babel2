@@ -22,3 +22,16 @@ exclude = '''
   | node_modules
 )/
 '''
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+line_length = 88
+order_by_type = true
+use_parentheses = true
+from_first = true
+known_future_library = ['six', 'future', '__future__']
+known_first_party = ['flask_babelhg']
+known_flask = ['flask', 'werkzeug', 'babel']
+default_section = 'THIRDPARTY'
+sections = ['FUTURE', 'STDLIB', 'FLASK', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER']

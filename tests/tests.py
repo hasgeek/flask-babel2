@@ -223,11 +223,9 @@ class GettextTestCase(unittest.TestCase):
         yes = lazy_gettext(u'Yes')
         with app.test_request_context():
             assert text_type(yes) == 'Ja'
-            assert yes.__html__() == 'Ja'
         app.config['BABEL_DEFAULT_LOCALE'] = 'en_US'
         with app.test_request_context():
             assert text_type(yes) == 'Yes'
-            assert yes.__html__() == 'Yes'
 
     def test_lazy_ngettext(self):
         app = flask.Flask(__name__)
@@ -235,11 +233,9 @@ class GettextTestCase(unittest.TestCase):
         one_apple = lazy_ngettext(u'%(num)s Apple', u'%(num)s Apples', 1)
         with app.test_request_context():
             assert text_type(one_apple) == '1 Apfel'
-            assert one_apple.__html__() == '1 Apfel'
         two_apples = lazy_ngettext(u'%(num)s Apple', u'%(num)s Apples', 2)
         with app.test_request_context():
             assert text_type(two_apples) == u'2 Äpfel'
-            assert two_apples.__html__() == u'2 Äpfel'
 
     def test_lazy_gettext_defaultdomain(self):
         app = flask.Flask(__name__)
