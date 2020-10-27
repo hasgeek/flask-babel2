@@ -12,10 +12,17 @@ from __future__ import absolute_import
 
 from contextlib import contextmanager
 from datetime import datetime
+import json
 import os
 
 from babel import Locale, dates, numbers, support
-from flask import _app_ctx_stack, _request_ctx_stack, current_app, has_request_context
+from flask import (
+    _app_ctx_stack,
+    _request_ctx_stack,
+    current_app,
+    has_request_context,
+    Response,
+)
 from werkzeug.datastructures import ImmutableDict
 
 from ._compat import string_types
@@ -31,6 +38,108 @@ else:
 
 
 _DEFAULT_LOCALE = Locale.parse('en')
+
+
+JAVASCRIPT = r"""
+    /**
+     * Formats text using Python-style formatting specifiers.
+     * This function supports strings, integers and floats.
+     * @param {string} text - The text
+     * @param {object} variables - An object containing the variables for the
+     *                 specifiers.
+     * @return {string}
+     */
+    babel.format = function(text, variables) {
+        if (typeof variables !== "object") {
+            variables = {};
+        }
+
+        return text.replace(
+            /%\(([a-zA-Z0-9]\w*)\)(\d+)?([a-z])/g,
+            function(match, fname, length, type) {
+                if (!(fname in variables) || !variables.hasOwnProperty(fname))
+                    throw new Error(
+                        "Format variable " + fname + " doesn't exist!"
+                    );
+
+                var v = variables[fname];
+                var output = "";
+
+                if (type === "d") {
+                    v = "" + (v|0);
+                } else if (type === "f") {
+                    v = "" + (+v);
+                } else if (type === "s") {
+                    v = "" + v;
+                } else {
+                    throw new Error("Unknown formatting specifier " + type);
+                }
+
+                if (length && v.length < length|0) {
+                    if (length.charAt(0) === "0" &&
+                        (type === "d" || type === "f")) {
+                        output += Array((length|0) - v.length).join("0");
+                    } else {
+                        output += Array((length|0) - v.length).join(" ");
+                    }
+                }
+
+                output += v;
+                return output;
+            }
+        );
+    };
+
+    /**
+     * Get some text translated in the current language.
+     * @param {string} text - The text
+     * @param {object} variables - An object containing the variables for
+     *                 formatting.
+     * @return {string}
+     */
+    babel.gettext = function(text, variables) {
+        if ((text in babel.catalog) && babel.catalog.hasOwnProperty(text)) {
+            return babel.format(babel.catalog[text], variables);
+        } else {
+            return babel.format(text, variables);
+        }
+    };
+
+    /**
+     * Get some pluralized text translated in the current language.
+     * @param {string} text - The text
+     * @param {string} plural_text - The text for plural
+     * @param {number} n - The amount of items, determines plurality
+     * @param {object} variables - An object containing the variables for
+     *                 formatting.
+     * @return {string}
+     */
+    babel.ngettext = function(text, text_plural, n, variables) {
+        var p;
+        if (babel.plural) {
+            p = babel.plural(n);
+        } else {
+            p = p === 1 ? 0 : 1;
+        }
+
+        if ((text in babel.catalog) && babel.catalog.hasOwnProperty(text)) {
+            return babel.format(babel.catalog[text][p], variables);
+        } else {
+            return babel.format([text, text_plural][p], variables);
+        }
+    };
+"""
+
+
+def c2js(plural):
+    """Gets a C expression as used in PO files for plural forms and returns a
+    JavaScript function that implements an equivalent expression.
+    """
+
+    if len(plural) > 1000:
+        raise ValueError('plural form expression is too long')
+
+    return "function(n) { return (" + plural + "); }"
 
 
 class Babel(object):
@@ -68,6 +177,7 @@ class Babel(object):
         default_domain=None,
         date_formats=None,
         configure_jinja=True,
+        view_path='/_jstrans.js',
     ):
         self._default_locale = default_locale
         self._default_timezone = default_timezone
@@ -80,6 +190,7 @@ class Babel(object):
         self.app = app
         self.locale_selector_func = None
         self.timezone_selector_func = None
+        self.view_path = view_path
 
         if app is not None:
             self.init_app(app)
@@ -131,6 +242,60 @@ class Babel(object):
                 lambda s, p, n: get_domain().get_translations().ungettext(s, p, n),
                 newstyle=True,
             )
+
+        app.add_url_rule(self.view_path, "babel_catalog", self.catalog_view)
+
+    def catalog_view(self):
+        js = [
+            """"use strict";
+
+(function() {
+    var babel = {};
+    babel.catalog = """
+        ]
+
+        translations = get_domain().get_translations()
+        # Here used to be an isinstance check for NullTranslations, but the
+        # translation object that is "merged" by flask-babel is seen as an
+        # instance of NullTranslations.
+        catalog = translations._catalog.copy()
+
+        # copy()ing the catalog here because we're modifying the original copy.
+        for key, value in catalog.copy().items():
+            if isinstance(key, tuple):
+                text, plural = key
+                if text not in catalog:
+                    catalog[text] = {}
+
+                catalog[text][plural] = value
+                del catalog[key]
+
+        js.append(json.dumps(catalog, indent=4))
+
+        js.append(";\n")
+        js.append(JAVASCRIPT)
+
+        metadata = translations.gettext("")
+        if metadata:
+            for m in metadata.splitlines():
+                if m.lower().startswith("plural-forms:"):
+                    js.append("    babel.plural = ")
+                    js.append(c2js(m.lower().split("plural=")[1]))
+
+        js.append(
+            """
+
+    window.babel = babel;
+    window.gettext = babel.gettext;
+    window.ngettext = babel.ngettext;
+    window._ = babel.gettext;
+})();
+"""
+        )
+
+        resp = Response("".join(js))
+        resp.headers["Content-Type"] = "text/javascript"
+        return resp
 
     def localeselector(self, f):
         """Registers a callback function for locale selection.  The default
