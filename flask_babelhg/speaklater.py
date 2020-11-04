@@ -68,6 +68,11 @@ class LazyString(object):
     def __ge__(self, other):
         return text_type(self) >= other
 
+    def __html__(self):
+        # https://github.com/python-babel/flask-babel/issues/121
+        # This method is required; strings in source must be HTML-escaped if necessary
+        return text_type(self)
+
     def __hash__(self):
         return hash(text_type(self))
 
